@@ -1,0 +1,15 @@
+CREATE EXTERNAL TABLE IF NOT EXISTS Sales(RetailerCountry  String,OrderMethodType String,RetailerType String,ProductLine String,ProductType String,Product String,Year Int,Quarter String,Revenue Double,Quantity Int,GrossMargin Double)COMMENT 'Data about sales product of 2012-2014' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE; 
+
+LOAD DATA INPATH '/test/salesdata.csv' INTO TABLE sales;
+
+for dynamic parititions:
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+//// increase scan range and time of execution
+set hive.mapred.mode= nonstrict;  (hive-site.xml) //full scan tables
+set hive.mapred.mode= strict;
+
+CREATE  TABLE IF NOT EXISTS Int_Sales(OrderMethodType String,RetailerType String,ProductLine String,ProductType String,Product String,Year Int,Quarter String,Revenue Double,Quantity Int,GrossMargin Double)PARTITIONED BY(RetailerCountry  String) ROW FORMAT DELIMITED  FIELDS TERMINATED BY ',' STORED AS TEXTFILE;
+
+INSERT INTO TABLE Int_Sales PARTITION (RetailerCountry) select OrderMethodType,RetailerType,ProductLine,ProductType,Product ,Year,Quarter,Revenue,Quantity,GrossMargin from sales;

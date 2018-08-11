@@ -1,0 +1,65 @@
+create table homedata(id int,desc string,name string,d1 int,d2 float,d3 float,d4 float,location string,usage string,watts float)
+row format delimited
+fields terminated by ','
+--
+COMMENT ‘Employee details’
+FIELDS TERMINATED BY ‘\t’
+LINES TERMINATED BY ‘\n’
+STORED as TEXTFILE
+
+CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [db_name.]table_name
+  (col_name data_type [COMMENT 'col_comment'], ...)
+  [PARTITIONED BY (col_name data_type [COMMENT 'col_comment'], ...)]
+  [COMMENT 'table_comment']
+  [WITH SERDEPROPERTIES ('key1'='value1', 'key2'='value2', ...)]
+  [
+   [ROW FORMAT row_format] [STORED AS file_format]
+  ]
+  [LOCATION 'hdfs_path']
+  [TBLPROPERTIES ('key1'='value1', 'key2'='value2', ...)]
+  [CACHED IN 'pool_name' [WITH REPLICATION = integer] | UNCACHED]
+  
+  
+for dynamic partition: hive shell/hive-site.xml
+set hive.exec.dynamic.partition=true;
+set hive.exec.dynamic.partition.mode=nonstrict;
+set hive.exec.max.dynamic.partitions=1000;
+set hive.exec.max.dynamic.partitions.pernode=1000;
+
+concepts;
+
+external table/internal table
+
+files in hdfs will be moved while loading data
+
+
+external table/internal table
+
+files in local will be copied while loading data
+
+
+
+//////////inserting data into tables;
+
+M1:
+#To overwrite the data in the table use -
+LOAD DATA INPATH '/home/hadoop/employee.csv' OVERWRITE INTO TABLE Employee;
+
+#To append the data in the table use - 
+LOAD DATA INPATH '/home/hadoop/employee.csv' INTO TABLE Employee;
+
+M2:
+#Overwrite data from result of a select query into the table 
+INSERT OVERWRITE TABLE Employee SELECT id, name, age, salary from Employee_old;
+
+#Append data from result of a select query into the table
+INSERT INTO TABLE Employee SELECT id, name, age, salary from Employee_old;
+
+M3:
+#Insert a single row
+INSERT INTO table Employee 
+values(50000, 'Rakesh', 28, 57000);
+
+#Insert Multiple rows
+INSERT INTO table Employee 
+values(60001, 'Sudip', 34, 62000),(70001, 'Suresh', 45, 76000);
